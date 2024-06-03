@@ -1,39 +1,32 @@
 // Start a kaboom game
 kaboom({
-	// Scale the whole game up
-	scale: 4,
-	// Set the default font
-	font: "monospace",
+    scale: 4,  // Scale the whole game up
+    font: "monospace",  // Set the default font
 })
 
 // Loading a multi-frame sprite
 loadSprite("dino", "/Character/free-3-character-sprite-sheets-pixel-art/3 SteamMan/SteamMan_craft.png", {
-	// The image contains 6 frames layed out horizontally, slice it into individual frames
-	sliceX: 6,
-	// Define animations
-	anims: {
-		"idle": {
-			// Starts from frame 0, ends at frame 2
-			from: 0,
-			to: 2,
-			// Frames per second
-			speed: 5,
-			loop: true,
-		},
-		"run": {
-			from: 3,
-			to: 5,
-			speed: 10,
-			loop: true,
-		},
-		// This animation only has 1 frame
-		"jump": {
-			from: 6,
-			to: 6,
-			speed: 1,
-			loop: false,
-		},
-	},
+    sliceX: 6,  // The image contains 6 frames layed out horizontally, slice it into individual frames
+    anims: {
+        "idle": {
+            from: 0,
+            to: 2,
+            speed: 5,
+            loop: true,
+        },
+        "run": {
+            from: 3,
+            to: 5,
+            speed: 10,
+            loop: true,
+        },
+        "jump": {
+            from: 5,
+            to: 5,
+            speed: 1,
+            loop: false,
+        },
+    },
 })
 
 const SPEED = 120
@@ -43,71 +36,68 @@ setGravity(640)
 
 // Add our player character
 const player = add([
-	sprite("dino"),
-	pos(center()),
-	anchor("center"),
-	area(),
-	body(),
+    sprite("dino"),
+    pos(center()),
+    anchor("center"),
+    area(),
+    body(),
 ])
 
-// .play is provided by sprite() component, it starts playing the specified animation (the animation information of "idle" is defined above in loadSprite)
 player.play("idle")
 
 // Add a platform
 add([
-	rect(width(), 24),
-	area(),
-	outline(1),
-	pos(0, height() - 24),
-	body({ isStatic: true }),
+    rect(width(), 24),
+    area(),
+    outline(1),
+    pos(0, height() - 24),
+    body({ isStatic: true }),
 ])
 
 // Switch to "idle" or "run" animation when player hits ground
 player.onGround(() => {
-	if (!isKeyDown("left") && !isKeyDown("right")) {
-		player.play("idle")
-	} else {
-		player.play("run")
-	}
+    if (!isKeyDown("left") && !isKeyDown("right")) {
+        player.play("idle")
+    } else {
+        player.play("run")
+    }
 })
 
 player.onAnimEnd((anim) => {
-	if (anim === "idle") {
-		// You can also register an event that runs when certain anim ends
-	}
+    if (anim === "idle") {
+        // You can also register an event that runs when certain anim ends
+    }
 })
 
 onKeyPress("space", () => {
-	if (player.isGrounded()) {
-		player.jump(JUMP_FORCE)
-		player.play("jump")
-	}
+    if (player.isGrounded()) {
+        player.jump(JUMP_FORCE)
+        player.play("jump")
+    }
 })
 
 onKeyDown("left", () => {
-	player.move(-SPEED, 0)
-	player.flipX = true
-	// .play() will reset to the first frame of the anim, so we want to make sure it only runs when the current animation is not "run"
-	if (player.isGrounded() && player.curAnim() !== "run") {
-		player.play("run")
-	}
+    player.move(-SPEED, 0)
+    player.flipX = true
+    if (player.isGrounded() && player.curAnim() !== "run") {
+        player.play("run")
+    }
 })
 
 onKeyDown("right", () => {
-	player.move(SPEED, 0)
-	player.flipX = false
-	if (player.isGrounded() && player.curAnim() !== "run") {
-		player.play("run")
-	}
+    player.move(SPEED, 0)
+    player.flipX = false
+    if (player.isGrounded() && player.curAnim() !== "run") {
+        player.play("run")
+    }
 })
 
 ;["left", "right"].forEach((key) => {
-	onKeyRelease(key, () => {
-	// Only reset to "idle" if player is not holding any of these keys
-		if (player.isGrounded() && !isKeyDown("left") && !isKeyDown("right")) {
-			player.play("idle")
-		}
-	})
+    onKeyRelease(key, () => {
+        if (player.isGrounded() && !isKeyDown("left") && !isKeyDown("right")) {
+            player.play("idle")
+        }
+    })
 })
 
 const getInfo = () => `
@@ -117,13 +107,11 @@ Frame: ${player.frame}
 
 // Add some text to show the current animation
 const label = add([
-	text(getInfo(), { size: 12 }),
-	color(0, 0, 0),
-	pos(4),
+    text(getInfo(), { size: 12 }),
+    color(0, 0, 0),
+    pos(4),
 ])
 
 label.onUpdate(() => {
-	label.text = getInfo()
+    label.text = getInfo()
 })
-
-// Check out https://kaboomjs.com#SpriteComp for everything sprite() provides
